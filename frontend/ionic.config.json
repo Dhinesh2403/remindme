@@ -1,0 +1,7 @@
+{
+  "name": "remindme-buddy",
+  "type": "angular",
+  "integrations": {
+    "capacitor": {}
+  }
+}

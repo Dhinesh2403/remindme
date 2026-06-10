@@ -1,0 +1,185 @@
+// src/app/dashboard/dashboard.component.ts
+import { Component, inject, OnInit, computed } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import {
+  IonContent,
+  IonRefresher,
+  IonRefresherContent,
+  IonIcon,
+  IonSkeletonText,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  timeOutline,
+  notificationsOutline,
+  alertCircleOutline,
+  trendingUpOutline,
+  calendarOutline,
+  peopleOutline,
+  statsChartOutline,
+  addOutline,
+} from 'ionicons/icons';
+import { AuthService } from '../core/services/auth.service';
+import { ReminderService } from '../core/services/reminder.service';
+
+@Component({
+  selector: 'app-dashboard',
+  standalone: true,
+  imports: [
+    CommonModule,
+    IonContent,
+    IonRefresher,
+    IonRefresherContent,
+    IonIcon,
+    IonSkeletonText,
+  ],
+  template: `
+    <ion-content class="dashboard-content">
+      <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content></ion-refresher-content>
+      </ion-refresher>
+
+      <!-- Header -->
+      <div class="home-header">
+        <div class="header-row">
+          <div>
+            <h1 class="greeting">{{ greeting }}, {{ firstName() }} 👋</h1>
+            <p class="greeting-sub">
+              You have {{ todayCount() }} reminder{{ todayCount() !== 1 ? 's' : '' }} for today
+            </p>
+          </div>
+          <div class="avatar-btn" (click)="nav.navigate(['/app/settings'])">
+            <ion-icon name="person" style="font-size:20px;color:white"></ion-icon>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card" (click)="goToReminders('today')">
+          <div class="stat-icon" style="background:#EFF6FF;color:#3B82F6">
+            <ion-icon name="time-outline"></ion-icon>
+          </div>
+          <div class="stat-num" style="color:#3B82F6">{{ todayCount() }}</div>
+          <div class="stat-label">Today</div>
+        </div>
+        <div class="stat-card" (click)="goToReminders('upcoming')">
+          <div class="stat-icon" style="background:#EDE9FE;color:#7C3AED">
+            <ion-icon name="notifications-outline"></ion-icon>
+          </div>
+          <div class="stat-num" style="color:#7C3AED">{{ upcomingCount() }}</div>
+          <div class="stat-label">Upcoming</div>
+        </div>
+        <div class="stat-card" (click)="goToReminders('missed')">
+          <div class="stat-icon" style="background:#FEF2F2;color:#EF4444">
+            <ion-icon name="alert-circle-outline"></ion-icon>
+          </div>
+          <div class="stat-num" style="color:#EF4444">{{ missedCount() }}</div>
+          <div class="stat-label">Missed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#ECFDF5;color:#10B981">
+            <ion-icon name="trending-up-outline"></ion-icon>
+          </div>
+          <div class="stat-num" style="color:#10B981">{{ completionRate() }}%</div>
+          <div class="stat-label">Complete</div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <div class="action-card cal-card" (click)="nav.navigate(['/app/calendar'])">
+          <ion-icon name="calendar-outline" class="action-icon"></ion-icon>
+          <div class="action-title">View Calendar</div>
+          <div class="action-sub">See all your upcoming events</div>
+        </div>
+        <div class="action-card friends-card" (click)="nav.navigate(['/app/friends'])">
+          <ion-icon name="people-outline" class="action-icon"></ion-icon>
+          <div class="action-title">Friends</div>
+          <div class="action-sub">Manage accountability buddies</div>
+        </div>
+        <div class="action-card insights-card" (click)="nav.navigate(['/app/insights'])">
+          <ion-icon name="stats-chart-outline" class="action-icon"></ion-icon>
+          <div class="action-title">Insights</div>
+          <div class="action-sub">Track your productivity</div>
+        </div>
+      </div>
+
+      <!-- FAB -->
+      <div class="fab" (click)="nav.navigate(['/app/reminders/create'])">
+        <ion-icon name="add-outline" style="font-size:26px;color:white"></ion-icon>
+      </div>
+
+    </ion-content>
+  `,
+  styles: [`
+    .dashboard-content { --background: var(--rm-bg); }
+    .home-header { padding: 20px 16px 16px; background: white; border-radius: 0 0 24px 24px; margin-bottom: 16px; box-shadow: var(--rm-shadow-md); }
+    .header-row { display: flex; align-items: center; justify-content: space-between; }
+    .greeting { font-size: 20px; font-weight: 800; color: var(--rm-text-primary); margin: 0; }
+    .greeting-sub { font-size: 13px; color: var(--rm-text-secondary); margin: 4px 0 0; }
+    .avatar-btn { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--rm-purple), #9333EA); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 16px; margin-bottom: 16px; }
+    .stat-card { background: white; border-radius: 18px; padding: 16px; box-shadow: var(--rm-shadow-sm); cursor: pointer; transition: transform 0.15s; }
+    .stat-card:active { transform: scale(0.97); }
+    .stat-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 10px; }
+    .stat-num { font-size: 28px; font-weight: 900; line-height: 1; }
+    .stat-label { font-size: 12px; color: var(--rm-text-muted); margin-top: 2px; }
+    .quick-actions { padding: 0 16px; display: flex; flex-direction: column; gap: 12px; }
+    .action-card { border-radius: 20px; padding: 20px; cursor: pointer; transition: transform 0.15s; }
+    .action-card:active { transform: scale(0.98); }
+    .cal-card { background: linear-gradient(135deg, #7C3AED, #9333EA); }
+    .friends-card { background: linear-gradient(135deg, #06B6D4, #3B82F6); }
+    .insights-card { background: linear-gradient(135deg, #F97316, #EF4444); }
+    .action-icon { font-size: 26px; color: white; }
+    .action-title { font-size: 17px; font-weight: 800; color: white; margin-top: 8px; }
+    .action-sub { font-size: 12px; color: rgba(255,255,255,0.8); margin-top: 2px; }
+    .fab { position: fixed; bottom: 88px; right: 20px; width: 54px; height: 54px; border-radius: 50%; background: var(--rm-purple); display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 6px 20px rgba(124,58,237,0.4); z-index: 100; }
+  `],
+})
+export class DashboardComponent implements OnInit {
+  protected nav = inject(Router);
+  private authService = inject(AuthService);
+  private reminderService = inject(ReminderService);
+
+  readonly currentUser = this.authService.currentUser;
+  readonly todayCount = this.reminderService.todayCount;
+  readonly upcomingCount = this.reminderService.upcomingCount;
+  readonly missedCount = this.reminderService.missedCount;
+  readonly completionRate = this.reminderService.completionRate;
+
+  readonly firstName = computed(() => {
+    const name = this.currentUser()?.name ?? '';
+    return name.split(' ')[0];
+  });
+
+  get greeting(): string {
+    const h = new Date().getHours();
+    if (h < 12) return 'Good morning';
+    if (h < 17) return 'Good afternoon';
+    return 'Good evening';
+  }
+
+  constructor() {
+    addIcons({
+      timeOutline, notificationsOutline, alertCircleOutline,
+      trendingUpOutline, calendarOutline, peopleOutline,
+      statsChartOutline, addOutline,
+    });
+  }
+
+  ngOnInit(): void {
+    this.reminderService.loadStats().subscribe();
+  }
+
+  doRefresh(event: CustomEvent): void {
+    this.reminderService.loadStats().subscribe({
+      complete: () => (event.target as HTMLIonRefresherElement).complete(),
+    });
+  }
+
+  goToReminders(filter: string): void {
+    this.nav.navigate(['/app/reminders'], { queryParams: { filter } });
+  }
+}

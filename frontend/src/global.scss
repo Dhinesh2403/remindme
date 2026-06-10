@@ -1,0 +1,181 @@
+/* src/global.scss */
+/* ─── Import theme variables ─────────────────────────────────────────────── */
+@import './theme/variables';
+
+/* ─── Google Fonts ───────────────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Sans:wght@400;500;600&display=swap');
+
+/* ─── Ionic CSS Variables ─────────────────────────────────────────────────── */
+@import "@ionic/angular/css/core.css";
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/* ─── Global resets ──────────────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size:   16px;
+  color:       var(--rm-text-primary);
+  background:  var(--rm-bg);
+  overflow:    hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+}
+
+/* ─── Ionic component resets ─────────────────────────────────────────────── */
+ion-content {
+  --background: var(--rm-bg);
+}
+
+ion-header {
+  box-shadow: none;
+  &::after { display: none; }
+}
+
+ion-toolbar {
+  --background: white;
+  --color:      var(--rm-text-primary);
+  --border-width: 0;
+  --padding-start: 0;
+  --padding-end:   0;
+}
+
+ion-card {
+  --background: var(--rm-card);
+  border-radius: var(--rm-radius-lg);
+  box-shadow:    var(--rm-shadow-md);
+  margin:        0;
+}
+
+ion-item {
+  --background:       transparent;
+  --border-color:     var(--rm-border);
+  --color:            var(--rm-text-primary);
+  --padding-start:    0;
+  --inner-padding-end:0;
+}
+
+ion-searchbar {
+  --background:        white;
+  --border-radius:     14px;
+  --box-shadow:        var(--rm-shadow-sm);
+  --color:             var(--rm-text-primary);
+  --placeholder-color: var(--rm-text-muted);
+  --icon-color:        var(--rm-text-muted);
+  --cancel-button-color: var(--rm-purple);
+  padding: 0 !important;
+}
+
+ion-segment {
+  --background: #F3F4F6;
+}
+
+ion-segment-button {
+  --border-radius:   10px;
+  --color:           var(--rm-text-muted);
+  --color-checked:   var(--rm-purple);
+  --background-checked: white;
+  --indicator-color: var(--rm-purple);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+ion-chip {
+  --background: #F3F4F6;
+  --color:      var(--rm-text-muted);
+  font-size:    12px;
+  font-weight:  600;
+  border-radius: 20px;
+  height:       32px;
+
+  &[color="primary"] {
+    --background: var(--rm-purple-light);
+    --color:      var(--rm-purple);
+  }
+}
+
+ion-fab-button {
+  --background:  var(--rm-purple);
+  --box-shadow:  0 6px 20px rgba(124,58,237,0.4);
+  --border-radius: 50%;
+}
+
+ion-toast {
+  --border-radius: 14px;
+  --box-shadow:    var(--rm-shadow-lg);
+  font-weight:     600;
+}
+
+ion-alert {
+  .alert-wrapper {
+    border-radius: var(--rm-radius-xl) !important;
+    padding: 8px 0 !important;
+  }
+  .alert-title {
+    font-family: 'Nunito', sans-serif !important;
+    font-weight: 800 !important;
+  }
+  .alert-button.sc-ion-alert-md {
+    font-weight: 700;
+    &[aria-label="destructive"] { color: var(--rm-danger) !important; }
+  }
+}
+
+/* ─── Utility classes ────────────────────────────────────────────────────── */
+.text-purple    { color: var(--rm-purple) !important; }
+.text-muted     { color: var(--rm-text-muted) !important; }
+.text-danger    { color: var(--rm-danger) !important; }
+.text-success   { color: var(--rm-success) !important; }
+.bg-purple-light{ background: var(--rm-purple-light) !important; }
+
+.rm-card {
+  background:    white;
+  border-radius: var(--rm-radius-lg);
+  box-shadow:    var(--rm-shadow-sm);
+  padding:       16px;
+}
+
+.rm-page-padding { padding: 0 var(--rm-page-padding); }
+
+/* ─── Animations ─────────────────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in-up { animation: fadeInUp 0.3s cubic-bezier(0.34,1.56,0.64,1) both; }
+.animate-slide-in   { animation: slideIn  0.25s ease both; }
+
+/* ─── Dark mode ──────────────────────────────────────────────────────────── */
+.dark-theme {
+  ion-content { --background: var(--rm-bg); }
+  ion-toolbar  { --background: var(--rm-card); }
+  ion-card     { --background: var(--rm-card); }
+  ion-item     { --background: transparent; }
+
+  .rm-card,
+  .home-header,
+  .friend-card,
+  .reminder-card,
+  .ach-card { background: var(--rm-card) !important; }
+}

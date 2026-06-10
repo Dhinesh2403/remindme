@@ -1,0 +1,30 @@
+// src/environments/environment.prod.ts  ← PRODUCTION
+export const environment = {
+  name: 'production',
+  production: true,
+  staging: false,
+
+  // Railway production backend
+  apiUrl: 'https://remindme-buddy-api.up.railway.app/api',
+  socketUrl: 'https://remindme-buddy-api.up.railway.app',
+
+  googleClientId: 'YOUR_GOOGLE_PROD_CLIENT_ID.apps.googleusercontent.com',
+
+  firebase: {
+    apiKey: 'YOUR_FIREBASE_PROD_KEY',
+    authDomain: 'remindme-buddy.firebaseapp.com',
+    projectId: 'remindme-buddy',
+    messagingSenderId: 'YOUR_SENDER_ID',
+    appId: 'YOUR_APP_ID',
+    vapidKey: 'YOUR_VAPID_KEY',
+  },
+
+  features: {
+    whatsappIntegration: true,
+    aiScheduling: true,
+    smsReminders: true,
+  },
+
+  enableLogging: false,
+  logLevel: 'error',
+};

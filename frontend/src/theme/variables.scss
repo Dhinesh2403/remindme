@@ -1,0 +1,112 @@
+// src/theme/variables.scss
+// ─────────────────────────────────────────────
+// RemindMe Buddy — Design Token System
+// ─────────────────────────────────────────────
+
+:root {
+  // Brand colors
+  --rm-purple:        #7C3AED;
+  --rm-purple-light:  #EDE9FE;
+  --rm-purple-dark:   #5B21B6;
+  --rm-purple-rgb:    124, 58, 237;
+
+  // Semantic
+  --rm-success:       #10B981;
+  --rm-warning:       #F59E0B;
+  --rm-danger:        #EF4444;
+  --rm-info:          #3B82F6;
+
+  // Backgrounds
+  --rm-bg:            #F8F7FF;
+  --rm-card:          #FFFFFF;
+  --rm-surface:       #F3F4F6;
+
+  // Text
+  --rm-text-primary:  #1F2937;
+  --rm-text-secondary:#6B7280;
+  --rm-text-muted:    #9CA3AF;
+
+  // Borders
+  --rm-border:        #E5E7EB;
+  --rm-border-focus:  var(--rm-purple);
+
+  // Shadows
+  --rm-shadow-sm:     0 1px 3px rgba(0,0,0,0.08);
+  --rm-shadow-md:     0 4px 16px rgba(124,58,237,0.10);
+  --rm-shadow-lg:     0 8px 32px rgba(124,58,237,0.15);
+
+  // Radius
+  --rm-radius-sm:     8px;
+  --rm-radius-md:     14px;
+  --rm-radius-lg:     20px;
+  --rm-radius-xl:     28px;
+  --rm-radius-full:   9999px;
+
+  // Spacing
+  --rm-page-padding:  16px;
+
+  // Transitions
+  --rm-transition:    all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Reminder category colors
+  --rm-birthday:      #EC4899;
+  --rm-birthday-bg:   #FDF2F8;
+  --rm-work:          #F59E0B;
+  --rm-work-bg:       #FFFBEB;
+  --rm-medicine:      #EF4444;
+  --rm-medicine-bg:   #FEF2F2;
+  --rm-bill:          #3B82F6;
+  --rm-bill-bg:       #EFF6FF;
+  --rm-study:         #10B981;
+  --rm-study-bg:      #ECFDF5;
+  --rm-wedding:       #8B5CF6;
+  --rm-wedding-bg:    #F5F3FF;
+}
+
+// ─── Dark mode overrides ─────────────────────────────────────────────────────
+@media (prefers-color-scheme: dark) {
+  :root {
+    --rm-bg:           #0F0F1A;
+    --rm-card:         #1A1A2E;
+    --rm-surface:      #16213E;
+    --rm-text-primary: #F9FAFB;
+    --rm-text-secondary:#9CA3AF;
+    --rm-text-muted:   #6B7280;
+    --rm-border:       #374151;
+    --rm-shadow-md:    0 4px 16px rgba(0,0,0,0.4);
+  }
+}
+
+.dark-theme {
+  --rm-bg:           #0F0F1A;
+  --rm-card:         #1A1A2E;
+  --rm-surface:      #16213E;
+  --rm-text-primary: #F9FAFB;
+  --rm-text-secondary:#9CA3AF;
+  --rm-border:       #374151;
+}
+
+// ─── Ionic variable overrides ─────────────────────────────────────────────────
+:root {
+  --ion-color-primary:          var(--rm-purple);
+  --ion-color-primary-rgb:      var(--rm-purple-rgb);
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-shade:    var(--rm-purple-dark);
+  --ion-color-primary-tint:     var(--rm-purple-light);
+
+  --ion-background-color:       var(--rm-bg);
+  --ion-text-color:             var(--rm-text-primary);
+  --ion-border-color:           var(--rm-border);
+
+  --ion-card-background:        var(--rm-card);
+  --ion-item-background:        var(--rm-card);
+
+  --ion-font-family:            'DM Sans', -apple-system, system-ui, sans-serif;
+
+  --ion-tab-bar-background:     var(--rm-card);
+  --ion-tab-bar-border-color:   var(--rm-border);
+  --ion-tab-bar-color:          var(--rm-text-muted);
+  --ion-tab-bar-color-selected: var(--rm-purple);
+
+  --ion-toolbar-background:     var(--rm-card);
+}
