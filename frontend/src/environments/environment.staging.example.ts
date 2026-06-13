@@ -1,4 +1,5 @@
-// src/environments/environment.staging.ts  ← STAGING
+// src/environments/environment.staging.ts.example
+// Copy this to environment.staging.ts and fill in your values
 export const environment = {
   name: 'staging',
   production: false,
@@ -14,7 +15,7 @@ export const environment = {
     projectId: 'remindme-staging',
     messagingSenderId: 'YOUR_SENDER_ID',
     appId: 'YOUR_APP_ID',
-    vapidKey: 'YOUR_VAPID_KEY',
+    vapidKey: 'YOUR_STAGING_VAPID_KEY',
   },
 
   features: {

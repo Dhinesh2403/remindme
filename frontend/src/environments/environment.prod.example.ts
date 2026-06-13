@@ -1,4 +1,5 @@
-// src/environments/environment.prod.ts  ← PRODUCTION
+// src/environments/environment.prod.ts.example
+// Copy this to environment.prod.ts and fill in your values
 export const environment = {
   name: 'production',
   production: true,
@@ -14,7 +15,7 @@ export const environment = {
     projectId: 'remindme-buddy',
     messagingSenderId: 'YOUR_SENDER_ID',
     appId: 'YOUR_APP_ID',
-    vapidKey: 'YOUR_VAPID_KEY',
+    vapidKey: 'YOUR_PRODUCTION_VAPID_KEY',
   },
 
   features: {
