@@ -1,153 +1,3 @@
-@echo off
-title Ionic Android Auto Builder
-color 0A
-
-echo ============================================
-echo      IONIC ANDROID AUTO BUILD SCRIPT
-echo ============================================
-echo.
-
-REM =====================================================
-REM CHECK NODE
-REM =====================================================
-
-where node >nul 2>nul
-IF %ERRORLEVEL% NEQ 0 (
-    echo [ERROR] Node.js is not installed
-    pause
-    exit /b
-)
-
-echo [OK] Node.js Found
-node -v
-
-REM =====================================================
-REM CHECK JAVA
-REM =====================================================
-
-where java >nul 2>nul
-IF %ERRORLEVEL% NEQ 0 (
-    echo [ERROR] Java JDK not installed
-    pause
-    exit /b
-)
-
-echo [OK] Java Found
-java -version
-
-REM =====================================================
-REM CHECK IONIC
-REM =====================================================
-
-where ionic >nul 2>nul
-IF %ERRORLEVEL% NEQ 0 (
-    echo Installing Ionic CLI...
-    npm install -g @ionic/cli
-)
-
-echo [OK] Ionic CLI Ready
-
-REM =====================================================
-REM INSTALL DEPENDENCIES
-REM =====================================================
-
-echo.
-echo Installing npm packages...
-call npm install
-
-IF %ERRORLEVEL% NEQ 0 (
-    echo [ERROR] npm install failed
-    pause
-    exit /b
-)
-
-REM =====================================================
-REM FIX ANGULAR / IONIC TOOLKIT ISSUES
-REM =====================================================
-
-echo.
-echo Fixing Angular and Ionic dependencies...
-
-call npm install @angular-devkit/build-angular@latest --save-dev
-call npm install @ionic/angular-toolkit@latest --save-dev
-
-REM =====================================================
-REM INSTALL CAPACITOR
-REM =====================================================
-
-echo.
-echo Installing Capacitor...
-
-call npm install @capacitor/core @capacitor/cli @capacitor/android
-
-REM =====================================================
-REM CHECK CAPACITOR CONFIG
-REM =====================================================
-
-IF NOT EXIST capacitor.config.ts (
-    
-    IF NOT EXIST capacitor.config.json (
-
-        echo.
-        echo Creating Capacitor config...
-
-        echo import { CapacitorConfig } from '@capacitor/cli';> capacitor.config.ts
-        echo.>> capacitor.config.ts
-        echo const config: CapacitorConfig = {>> capacitor.config.ts
-        echo   appId: 'com.remind.app',>> capacitor.config.ts
-        echo   appName: 'RemindMe',>> capacitor.config.ts
-        echo   webDir: 'www',>> capacitor.config.ts
-        echo   bundledWebRuntime: false>> capacitor.config.ts
-        echo };>> capacitor.config.ts
-        echo.>> capacitor.config.ts
-        echo export default config;>> capacitor.config.ts
-
-    )
-)
-
-REM =====================================================
-REM ADD ANDROID PLATFORM
-REM =====================================================
-
-IF NOT EXIST android (
-
-    echo.
-    echo Adding Android platform...
-
-    call npx cap add android
-
-)
-
-REM =====================================================
-REM BUILD IONIC PROJECT
-REM =====================================================
-
-echo.
-echo Building Ionic project...
-
-call ionic build
-
-IF %ERRORLEVEL% NEQ 0 (
-    echo [ERROR] Ionic build failed
-    pause
-    exit /b
-)
-
-REM =====================================================
-REM SYNC CAPACITOR
-REM =====================================================
-
-echo.
-echo Syncing Android project...
-
-call npx cap sync android
-
-IF %ERRORLEVEL% NEQ 0 (
-    echo [ERROR] Capacitor sync failed
-    pause
-    exit /b
-)
-
 REM =====================================================
 REM BUILD DEBUG APK
 REM =====================================================
@@ -158,7 +8,7 @@ echo Building Debug APK...
 cd android
 
 IF EXIST gradlew.bat (
-    
+
     call gradlew.bat assembleDebug
 
 ) ELSE (
@@ -166,6 +16,7 @@ IF EXIST gradlew.bat (
     echo [ERROR] gradlew.bat not found
     pause
     exit /b
+
 )
 
 IF %ERRORLEVEL% NEQ 0 (
@@ -177,7 +28,54 @@ IF %ERRORLEVEL% NEQ 0 (
 cd ..
 
 REM =====================================================
-REM APK LOCATION
+REM COPY APK TO build-apk FOLDER
+REM =====================================================
+
+echo.
+echo Preparing APK output folder...
+
+IF NOT EXIST "build-apk" (
+    mkdir "build-apk"
+)
+
+set APK_SOURCE=android\app\build\outputs\apk\debug\app-debug.apk
+
+IF NOT EXIST "%APK_SOURCE%" (
+    echo [ERROR] APK not found:
+    echo %APK_SOURCE%
+    pause
+    exit /b
+)
+
+REM Create timestamp
+
+for /f "tokens=1-3 delims=/.- " %%a in ("%date%") do (
+    set D1=%%a
+    set D2=%%b
+    set D3=%%c
+)
+
+for /f "tokens=1-2 delims=:." %%a in ("%time%") do (
+    set HH=%%a
+    set MN=%%b
+)
+
+set APK_NAME=RemindMe_%D3%%D2%%D1%_%HH%%MN%.apk
+
+copy "%APK_SOURCE%" "build-apk\%APK_NAME%" >nul
+
+IF %ERRORLEVEL% NEQ 0 (
+    echo [ERROR] Failed to copy APK
+    pause
+    exit /b
+)
+
+REM Also keep latest build
+
+copy "%APK_SOURCE%" "build-apk\latest.apk" >nul
+
+REM =====================================================
+REM BUILD SUCCESS
 REM =====================================================
 
 echo.
@@ -186,13 +84,16 @@ echo BUILD SUCCESSFUL
 echo ============================================
 echo.
 
-echo APK Location:
-echo android\app\build\outputs\apk\debug\app-debug.apk
+echo Latest APK:
+echo %CD%\build-apk\latest.apk
 
 echo.
-echo Opening APK folder...
-
-start "" "android\app\build\outputs\apk\debug"
+echo Timestamped APK:
+echo %CD%\build-apk\%APK_NAME%
 
 echo.
+echo Opening build-apk folder...
+
+start "" "%CD%\build-apk"
+
 pause
